@@ -52,7 +52,7 @@ docs/
 
 ## 🗂 ERD
 
-ERD Image: `./docs/erd/ERD.png`
+![ERD Diagram](docs/erd/ERD.png)
 
 ---
 
