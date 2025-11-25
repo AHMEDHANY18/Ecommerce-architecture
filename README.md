@@ -180,4 +180,3 @@ ORDER BY total_spent DESC;
 
 ## ✨ Author
 Ahmed Hany
-Junior Backend Developer (Node.js / SQL)
