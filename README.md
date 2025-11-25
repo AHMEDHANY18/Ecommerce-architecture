@@ -1,19 +1,19 @@
 # 📦 E-Commerce Architecture & Database Design
 
 A clean, scalable **database-first foundation** for a sample E-Commerce system.
-This repository contains the **ERD**, **full SQL schema**, and a set of **ready-to-run analytical queries** used in real products.
+This repository contains the **ERD**, **full SQL schema**, and a set of **ready-to-run analytical queries** used in real-world products.
 
 ---
 
 ## ✅ Contents
 
-- **ERD Diagram** showing entities & relationships
-- **SQL Schema** for creating all tables with keys, constraints, and indexes
-- **Reporting Queries** for common business metrics (revenue, top products, high‑value customers)
+- ERD showing all entities and relationships
+- SQL schema (tables + constraints + indexes)
+- Analytical queries for revenue, top products, and high-value customers
 
 ---
 
-## 📁 Structure
+## 📁 Project Structure
 
 ```
 docs/
@@ -33,15 +33,15 @@ docs/
 
 ## 🧩 Entities
 
-- **Category**
-- **Product**
-- **Customer**
-- **Order**
-- **Order_details**
+- Category
+- Product
+- Customer
+- Order
+- Order_details
 
 ---
 
-## 🔗 Relationships (Summary)
+## 🔗 Relationships
 
 - **Category (1) → (Many) Product**
 - **Customer (1) → (Many) Order**
@@ -52,35 +52,22 @@ docs/
 
 ## 🗂 ERD
 
-Full ERD image: **`docs/erd/ERD.png`**
+ERD Image: `docs/erd/ERD.png`
 
 ---
 
 ## 🧱 Database Schema
 
-Schema file: **`docs/db-schema/schema.sql`**
-
-<details>
-<summary><strong>View Full Schema</strong></summary>
+Schema file: `docs/db-schema/schema.sql`
 
 ```sql
--- ============================================================
--- E-COMMERCE DATABASE SCHEMA
--- Entities:
---   Category, Product, Customer, Order, Order_details
--- ============================================================
-
--- ======================
--- 1. CATEGORY TABLE
--- ======================
+-- CATEGORY
 CREATE TABLE Category (
     category_id     INT PRIMARY KEY,
     category_name   VARCHAR(100) NOT NULL
 );
 
--- ======================
--- 2. PRODUCT TABLE
--- ======================
+-- PRODUCT
 CREATE TABLE Product (
     product_id      INT PRIMARY KEY,
     category_id     INT NOT NULL,
@@ -88,16 +75,13 @@ CREATE TABLE Product (
     description     TEXT,
     price           DECIMAL(10,2) NOT NULL,
     stock_quantity  INT NOT NULL,
-
     CONSTRAINT fk_product_category
         FOREIGN KEY (category_id)
         REFERENCES Category(category_id)
         ON DELETE CASCADE
 );
 
--- ======================
--- 3. CUSTOMER TABLE
--- ======================
+-- CUSTOMER
 CREATE TABLE Customer (
     customer_id     INT PRIMARY KEY,
     first_name      VARCHAR(100) NOT NULL,
@@ -106,75 +90,44 @@ CREATE TABLE Customer (
     password        VARCHAR(255) NOT NULL
 );
 
--- ======================
--- 4. ORDER TABLE
--- ======================
+-- ORDER
 CREATE TABLE `Order` (
     order_id        INT PRIMARY KEY,
     customer_id     INT NOT NULL,
     order_date      DATE NOT NULL,
     total_amount    DECIMAL(10,2) NOT NULL,
-
     CONSTRAINT fk_order_customer
         FOREIGN KEY (customer_id)
         REFERENCES Customer(customer_id)
         ON DELETE CASCADE
 );
 
--- ======================
--- 5. ORDER_DETAILS TABLE
--- ======================
+-- ORDER DETAILS
 CREATE TABLE Order_details (
     order_detail_id INT PRIMARY KEY,
     order_id        INT NOT NULL,
     product_id      INT NOT NULL,
     quantity        INT NOT NULL,
     unit_price      DECIMAL(10,2) NOT NULL,
-
     CONSTRAINT fk_orderdetails_order
         FOREIGN KEY (order_id)
         REFERENCES `Order`(order_id)
         ON DELETE CASCADE,
-
     CONSTRAINT fk_orderdetails_product
         FOREIGN KEY (product_id)
         REFERENCES Product(product_id)
         ON DELETE CASCADE
 );
-
--- ======================
--- RECOMMENDED INDEXES
--- ======================
-CREATE INDEX idx_product_category
-    ON Product(category_id);
-
-CREATE INDEX idx_order_customer
-    ON `Order`(customer_id);
-
-CREATE INDEX idx_orderdetails_order
-    ON Order_details(order_id);
-
-CREATE INDEX idx_orderdetails_product
-    ON Order_details(product_id);
 ```
-</details>
 
 ---
 
 ## 📊 Reporting Queries
 
-All queries are in **`docs/queries/`**.
-Each one is written to be directly reusable for dashboards / reports.
-
-### 1) Daily Revenue
+### 📅 Daily Revenue
 **File:** `docs/queries/daily_revenue.sql`
-**Goal:** Get total revenue for a specific day.
-
-<details>
-<summary><strong>Preview (structure)</strong></summary>
 
 ```sql
--- Total revenue per day
 SELECT
   o.order_date,
   SUM(od.quantity * od.unit_price) AS daily_revenue
@@ -183,16 +136,11 @@ JOIN Order_details od ON od.order_id = o.order_id
 WHERE o.order_date = :target_date
 GROUP BY o.order_date;
 ```
-</details>
 
 ---
 
-### 2) Monthly Top-Selling Products
+### 📈 Monthly Top-Selling Products
 **File:** `docs/queries/monthly_top_products.sql`
-**Goal:** Best‑selling products within a given month.
-
-<details>
-<summary><strong>Preview (structure)</strong></summary>
 
 ```sql
 SELECT
@@ -208,16 +156,11 @@ WHERE EXTRACT(MONTH FROM o.order_date) = :month
 GROUP BY p.product_id, p.name
 ORDER BY total_sold DESC;
 ```
-</details>
 
 ---
 
-### 3) Customers Over $500
+### 💲 Customers Who Spent Over $500
 **File:** `docs/queries/customers_over_500.sql`
-**Goal:** High‑value customers in the last month.
-
-<details>
-<summary><strong>Preview (structure)</strong></summary>
 
 ```sql
 SELECT
@@ -232,9 +175,9 @@ GROUP BY c.customer_id, c.first_name, c.last_name
 HAVING SUM(o.total_amount) > 500
 ORDER BY total_spent DESC;
 ```
-</details>
-
-> **Note:** Previews show the intended logic; full versions are in the query files.
 
 ---
 
+## ✨ Author
+Ahmed Hany
+Junior Backend Developer (Node.js / SQL)
